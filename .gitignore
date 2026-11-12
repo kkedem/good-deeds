@@ -8,3 +8,6 @@ node_modules
 next-env.d.ts
 .env*
 !.env.example
+
+# Working CSV data (demo sign-ups etc). Seed data in data/seed/ stays tracked.
+/data/*.csv

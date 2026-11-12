@@ -1,143 +1,101 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Gift, MapPin, Sparkle, TreePine, Zap } from "lucide-react";
+import { useSession } from "@/lib/client/session";
 
-const deeds = [
-  {
-    title: "Send someone a note to say you appreciate them.",
-    detail: "A few sincere words can stay with someone all day.",
-    time: "2 minutes",
-    icon: "✉",
-  },
-  {
-    title: "Bring a colleague or neighbor their favorite drink.",
-    detail: "A small surprise is a lovely way to say, “I thought of you.”",
-    time: "5 minutes",
-    icon: "☕",
-  },
-  {
-    title: "Pick up a little litter on your next walk.",
-    detail: "A kinder neighborhood starts with one small action.",
-    time: "5 minutes",
-    icon: "🌱",
-  },
-  {
-    title: "Call someone you have not caught up with lately.",
-    detail: "A familiar voice can make an ordinary day feel special.",
-    time: "10 minutes",
-    icon: "♡",
-  },
+const FEATURES = [
+  { icon: TreePine, text: "Beach cleans, litter picks, food banks, dog walks and more" },
+  { icon: Zap, text: "Many take an hour or two – no long-term commitment" },
+  { icon: Gift, text: "10 points for every confirmed hour, to spend locally" },
 ];
 
-const quickIdeas = [
-  { icon: "☀", title: "Share a compliment", type: "KIND WORDS" },
-  { icon: "♧", title: "Help a neighbor", type: "LEND A HAND" },
-  { icon: "♡", title: "Check in on a friend", type: "STAY CONNECTED" },
-];
+export default function HomePage() {
+  const router = useRouter();
+  const { user, loading } = useSession();
 
-export default function Home() {
-  const [deedIndex, setDeedIndex] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const deed = deeds[deedIndex];
+  useEffect(() => {
+    if (loading) return;
+    if (user) router.replace("/find");
+  }, [loading, user, router]);
 
-  function chooseAnotherDeed() {
-    setDeedIndex((current) => (current + 1) % deeds.length);
-    setIsComplete(false);
-  }
+  if (loading || user) return null;
 
   return (
-    <main>
-      <header className="topbar">
-        <a className="brand" href="#home" aria-label="Good Deed home">
-          <span className="brand-mark" aria-hidden="true">✳</span>
-          <span>good deed</span>
-        </a>
-        <a className="topbar-link" href="#ideas">Explore ideas <span aria-hidden="true">↗</span></a>
-      </header>
+    <div className="landing">
+      <div className="landing-wordmark">
+        <span className="landing-wordmark-icon" aria-hidden="true">
+          <Sparkle size={16} fill="currentColor" />
+        </span>
+        Good Deeds
+      </div>
 
-      <section className="hero" id="home">
-        <div className="hero-copy">
-          <p className="eyebrow"><span className="eyebrow-dot" /> A LITTLE GOOD GOES A LONG WAY</p>
-          <h1>Make today<br />a little <span>brighter.</span></h1>
-          <p className="hero-description">
-            You don&apos;t need a grand gesture to make a difference. Start with
-            one small thing, and see where kindness takes you.
-          </p>
-          <a className="primary-button" href="#today">
-            Find your good deed <span aria-hidden="true">↓</span>
-          </a>
+      <div className="landing-hero">
+        <div className="landing-hero-beach">
+          <Image
+            src="https://images.unsplash.com/photo-1616680214084-22670de1bc82?auto=format&fit=crop&w=900&q=70"
+            alt="Volunteers with rubbish bags on a beach"
+            fill
+            sizes="(max-width: 480px) 60vw, 288px"
+            style={{ objectFit: "cover" }}
+            priority
+          />
         </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="sun-halo" />
-          <div className="sun">✳</div>
-          <span className="orbit orbit-one">♡</span>
-          <span className="orbit orbit-two">✦</span>
-          <span className="orbit orbit-three">·</span>
-          <p className="art-note">little things<br />mean a lot</p>
+        <div className="landing-hero-small">
+          <Image
+            src="https://images.unsplash.com/photo-1544928938-6852c1925194?auto=format&fit=crop&w=900&q=70"
+            alt="Two people holding spades"
+            fill
+            sizes="(max-width: 480px) 40vw, 192px"
+            style={{ objectFit: "cover" }}
+          />
         </div>
-      </section>
+        <div className="landing-hero-small">
+          <Image
+            src="https://images.unsplash.com/photo-1599059813005-11265ba4b4ce?auto=format&fit=crop&w=900&q=70"
+            alt="Volunteers sorting tins at a food bank"
+            fill
+            sizes="(max-width: 480px) 40vw, 192px"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+        <span className="landing-hero-pill">
+          <MapPin size={16} aria-hidden="true" /> Live in Brighton &amp; Hove
+        </span>
+      </div>
 
-      <section className="today-section" id="today">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">YOUR MOMENT OF GOOD</p>
-            <h2>A small idea for today</h2>
-          </div>
-          <span className="today-date">A GOOD PLACE TO START</span>
-        </div>
-
-        <article className={`deed-card${isComplete ? " deed-card-complete" : ""}`}>
-          <div className="deed-icon" aria-hidden="true">{deed.icon}</div>
-          <div className="deed-copy">
-            <span className="deed-label">{isComplete ? "LOOK AT YOU, SPREADING GOOD" : "TODAY'S GOOD DEED"}</span>
-            <h3>{isComplete ? "You made someone's day a little brighter." : deed.title}</h3>
-            <p>{isComplete ? "Take a moment to enjoy that warm, good feeling." : deed.detail}</p>
-            <span className="time-chip"><span aria-hidden="true">◷</span> {deed.time}</span>
-          </div>
-          <div className="deed-actions">
-            <button
-              className={`done-button${isComplete ? " done-button-active" : ""}`}
-              type="button"
-              onClick={() => setIsComplete((complete) => !complete)}
-              aria-pressed={isComplete}
-            >
-              {isComplete ? "Done with love ✓" : "I did this"}
-            </button>
-            <button className="another-button" type="button" onClick={chooseAnotherDeed}>
-              Try another idea <span aria-hidden="true">↻</span>
-            </button>
-          </div>
-        </article>
-      </section>
-
-      <section className="ideas-section" id="ideas">
-        <div className="section-heading ideas-heading">
-          <div>
-            <p className="eyebrow">KINDNESS, YOUR WAY</p>
-            <h2>Good can look like anything</h2>
-          </div>
-          <p className="ideas-intro">Pick what feels right for you. Every little thing counts.</p>
-        </div>
-        <div className="ideas-grid">
-          {quickIdeas.map((idea) => (
-            <article className="idea-card" key={idea.title}>
-              <span className="idea-icon" aria-hidden="true">{idea.icon}</span>
-              <span className="idea-type">{idea.type}</span>
-              <h3>{idea.title}</h3>
-              <span className="idea-arrow" aria-hidden="true">↗</span>
-            </article>
+      <div className="landing-body">
+        <h1 className="landing-headline">Good deeds, close to home.</h1>
+        <p className="landing-subcopy">
+          Find a local good deed that fits your time, join in one tap, and get recognised for
+          every hour you give.
+        </p>
+        <ul className="landing-features">
+          {FEATURES.map((f) => (
+            <li className="landing-feature" key={f.text}>
+              <span className="landing-feature-icon" aria-hidden="true">
+                <f.icon size={18} />
+              </span>
+              {f.text}
+            </li>
           ))}
-        </div>
-      </section>
+        </ul>
+      </div>
 
-      <footer className="footer">
-        <a className="brand footer-brand" href="#home">
-          <span className="brand-mark" aria-hidden="true">✳</span>
-          <span>good deed</span>
-        </a>
-        <p>Small acts. Softer days. A little more good.</p>
-        <span className="footer-heart" aria-hidden="true">made with ♡</span>
-      </footer>
-    </main>
+      <div className="landing-actions">
+        <Link href="/signup" className="cg-btn cg-btn--primary cg-btn--lg">
+          Get started <ArrowRight size={20} aria-hidden="true" />
+        </Link>
+        <Link href="/login" className="cg-btn cg-btn--secondary cg-btn--lg">
+          I already have an account
+        </Link>
+        <Link href="/find" className="cg-btn cg-btn--ghost">
+          Have a look around first
+        </Link>
+      </div>
+    </div>
   );
 }

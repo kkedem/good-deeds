@@ -1,0 +1,9 @@
+id,name,icon,default_indoor_outdoor
+litter_picking,Litter picking,🧹,outdoor
+graffiti_removal,Graffiti removal,🎨,outdoor
+beach_cleaning,Beach cleaning,🏖️,outdoor
+greening,Greening,🌱,outdoor
+food_banks,Food banks,🥫,indoor
+animal_welfare,Animal welfare,🐾,outdoor
+school_tech_support,Local school tech support,💻,indoor
+skill_swap,Skill swap,🤝,either

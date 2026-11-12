@@ -1,0 +1,10 @@
+{
+  "description": "Discover and manage trusted volunteering opportunities matched to your interests, availability and location, so you can commit with confidence and track your impact.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
