@@ -2,12 +2,45 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  AlertTriangle,
+  BadgeCheck,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+  Clock3,
+  Hourglass,
+  Share2,
+  XCircle,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Modal from "@/components/Modal";
+import CategoryBadge from "@/components/CategoryBadge";
 import { Api, type Attendee } from "@/lib/client/api";
-import { categoryIcon, formatDate, showToast } from "@/lib/client/format";
+import { formatDate, showToast } from "@/lib/client/format";
 import { shareOpportunity } from "@/lib/client/share";
 import { useSession } from "@/lib/client/session";
 import type { DecoratedOpportunity } from "@/lib/server/services";
+import "./manage.css";
+
+const STATUS: Record<string, { label: string; tone: string; Icon: LucideIcon }> = {
+  joined: { label: "Joined", tone: "joined", Icon: Check },
+  pending: { label: "Pending confirmation", tone: "pending", Icon: Hourglass },
+  confirmed: { label: "Confirmed", tone: "ok", Icon: CheckCircle2 },
+  cancelled: { label: "Cancelled", tone: "cancelled", Icon: XCircle },
+  completed: { label: "Completed", tone: "ok", Icon: CheckCircle2 },
+  open: { label: "Open", tone: "open", Icon: Clock3 },
+};
+
+function StatusChip({ status }: { status: string }) {
+  const s = STATUS[status] ?? { label: status, tone: "cancelled", Icon: Clock3 };
+  return (
+    <span className={`manage-chip manage-chip--${s.tone}`}>
+      <s.Icon size={14} aria-hidden="true" />
+      {s.label}
+    </span>
+  );
+}
 
 export default function ManagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -37,25 +70,25 @@ export default function ManagePage({ params }: { params: Promise<{ id: string }>
 
   if (failed) {
     return (
-      <div className="screen">
-        <p>Couldn&apos;t load this opportunity.</p>
+      <div className="manage-screen">
+        <p className="manage-message">Couldn&apos;t load this opportunity.</p>
       </div>
     );
   }
 
   if (!opportunity) {
     return (
-      <div className="screen">
-        <p>Loading…</p>
+      <div className="manage-screen">
+        <p className="manage-message">Loading…</p>
       </div>
     );
   }
 
   if (opportunity.poster_id !== user.id) {
     return (
-      <div className="screen">
-        <p>You can only manage your own posts.</p>
-        <button className="btn btn-secondary" onClick={() => router.push("/profile")}>
+      <div className="manage-screen">
+        <p className="manage-message">You can only manage your own posts.</p>
+        <button type="button" className="cg-btn cg-btn--secondary" onClick={() => router.push("/profile")}>
           Back to profile
         </button>
       </div>
@@ -63,6 +96,8 @@ export default function ManagePage({ params }: { params: Promise<{ id: string }>
   }
 
   const isCompleted = opportunity.status === "completed";
+  const confirmedCount = attendees.filter((a) => a.status === "confirmed").length;
+  const hours = opportunity.hours;
 
   function openModal() {
     setChecked(new Set(attendees.map((a) => a.signup_id)));
@@ -91,76 +126,123 @@ export default function ManagePage({ params }: { params: Promise<{ id: string }>
   }
 
   return (
-    <div className="screen">
-      <div className="top-bar">
-        <button className="back-btn" aria-label="Back" onClick={() => router.push(`/opportunity/${opportunity.id}`)}>
-          ←
+    <div className="manage-screen">
+      <div className="manage-topbar">
+        <button
+          type="button"
+          className="manage-back"
+          aria-label="Back"
+          onClick={() => router.push(`/opportunity/${opportunity.id}`)}
+        >
+          <ChevronLeft size={24} />
         </button>
-        <h1 style={{ flex: 1, textAlign: "center", fontSize: "1.1rem" }}>Manage</h1>
-        <span style={{ width: 28 }}></span>
+        <span className="manage-topbar-title">Manage</span>
+        <span className="manage-topbar-spacer" aria-hidden="true" />
       </div>
 
-      <div className="card">
-        <div className="opp-title">
-          {categoryIcon(opportunity.category)} {opportunity.title}
-        </div>
-        <p className="opp-meta">
-          {formatDate(opportunity.date)} · {opportunity.hours} hrs · {isCompleted ? "Completed" : "Open"}
+      <header className="manage-header">
+        <CategoryBadge category={opportunity.category} size={48} />
+        <h1 className="manage-title">{opportunity.title}</h1>
+        <p className="manage-meta">
+          {formatDate(opportunity.date)}, {opportunity.start_time} · {hours} hrs
         </p>
-      </div>
+        <StatusChip status={isCompleted ? "completed" : "open"} />
+      </header>
 
-      <h2>Attendees ({attendees.length})</h2>
-      <div className="card" id="attendee-list">
+      <section className="manage-section">
+        <h2 className="manage-section-title">Who&apos;s coming ({attendees.length})</h2>
         {attendees.length ? (
-          attendees.map((a) => (
-            <div className="attendee-row" key={a.signup_id}>
-              <label className="checkbox-row">
-                <span>{a.name}</span>
-              </label>
-              <span className={`badge badge-${a.status}`}>{a.status}</span>
-            </div>
-          ))
+          <ul className="manage-list" id="attendee-list">
+            {attendees.map((a) => (
+              <li className="manage-attendee" key={a.signup_id}>
+                <span className="manage-avatar" aria-hidden="true">
+                  {a.name.trim().charAt(0).toUpperCase()}
+                </span>
+                <span className="manage-attendee-name">{a.name}</span>
+                <StatusChip status={a.status} />
+              </li>
+            ))}
+          </ul>
         ) : (
-          <p className="opp-meta">No one has joined yet.</p>
+          <div className="manage-empty" id="attendee-list">
+            No one has joined yet. Share your post to spread the word.
+          </div>
+        )}
+      </section>
+
+      <div className="manage-actions">
+        {!isCompleted ? (
+          <>
+            <button
+              type="button"
+              className="cg-btn cg-btn--lg cg-btn--secondary"
+              onClick={() => shareOpportunity(opportunity)}
+            >
+              <Share2 size={20} aria-hidden="true" /> Share this post
+            </button>
+            {attendees.length > 0 && (
+              <button type="button" className="cg-btn cg-btn--lg cg-btn--primary" onClick={openModal}>
+                <BadgeCheck size={20} aria-hidden="true" /> Mark complete
+              </button>
+            )}
+          </>
+        ) : (
+          <div className="manage-banner" role="status">
+            <CheckCircle2 size={20} aria-hidden="true" />
+            <span>
+              This opportunity is complete. {confirmedCount} {confirmedCount === 1 ? "volunteer" : "volunteers"}{" "}
+              confirmed.
+            </span>
+          </div>
         )}
       </div>
 
-      {!isCompleted ? (
-        <>
-          <button className="btn btn-primary" onClick={() => shareOpportunity(opportunity)}>
-            Share this post
-          </button>
-          {attendees.length > 0 && (
-            <button className="btn btn-accent" onClick={openModal}>
-              Mark complete
-            </button>
-          )}
-        </>
-      ) : (
-        <div className="empty-state">This opportunity is complete.</div>
-      )}
-
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
-          <h2>Confirm hours for everyone who took part?</h2>
-          {attendees.map((a) => (
-            <div className="attendee-row" key={a.signup_id}>
-              <label className="checkbox-row">
-                <input
-                  type="checkbox"
-                  checked={checked.has(a.signup_id)}
-                  onChange={() => toggleCheck(a.signup_id)}
-                />
-                <span>{a.name}</span>
-              </label>
-            </div>
-          ))}
-          <button className="btn btn-primary" onClick={handleConfirm}>
-            Confirm
-          </button>
-          <button className="btn btn-ghost" onClick={() => setShowModal(false)}>
-            Cancel
-          </button>
+          <h2 className="modal-title">Confirm hours for everyone who took part?</h2>
+          <p className="modal-text">
+            Untick anyone who didn&apos;t come. Ticked people get {hours} {hours === 1 ? "hour" : "hours"} confirmed
+            and {Math.round(hours * 10)} points. Unticked people get no hours or points.
+          </p>
+          <ul className="manage-check-list">
+            {attendees.map((a) => {
+              const isChecked = checked.has(a.signup_id);
+              return (
+                <li key={a.signup_id}>
+                  <label className="manage-check-row">
+                    <input
+                      type="checkbox"
+                      className="manage-check-input"
+                      checked={isChecked}
+                      onChange={() => toggleCheck(a.signup_id)}
+                    />
+                    <span className="manage-check-box" aria-hidden="true">
+                      {isChecked && <Check size={16} strokeWidth={3} />}
+                    </span>
+                    <span className="manage-check-text">
+                      <span className="manage-check-name">{a.name}</span>
+                      <span
+                        className={`manage-check-status${a.status === "pending" ? " manage-check-status--pending" : ""}`}
+                      >
+                        {a.status === "pending" ? "Said they've done it" : "Joined"}
+                      </span>
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="modal-actions">
+            <button type="button" className="cg-btn cg-btn--lg cg-btn--primary" onClick={handleConfirm}>
+              Confirm {checked.size} {checked.size === 1 ? "person" : "people"}
+            </button>
+            <button type="button" className="cg-btn cg-btn--ghost" onClick={() => setShowModal(false)}>
+              Cancel
+            </button>
+          </div>
+          <p className="manage-warning">
+            <AlertTriangle size={14} aria-hidden="true" /> This can&apos;t be undone.
+          </p>
         </Modal>
       )}
     </div>

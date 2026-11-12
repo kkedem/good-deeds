@@ -2,29 +2,41 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Compass, Gift, PlusCircle, UserRound } from "lucide-react";
+import "./bottom-nav.css";
 
 const ITEMS = [
-  { route: "find", icon: "🧭", label: "Find" },
-  { route: "post", icon: "➕", label: "Post" },
-  { route: "rewards", icon: "🎁", label: "Rewards" },
-  { route: "profile", icon: "👤", label: "Profile" },
+  { route: "find", icon: Compass, label: "Find" },
+  { route: "post", icon: PlusCircle, label: "Post" },
+  { route: "rewards", icon: Gift, label: "Rewards" },
+  { route: "profile", icon: UserRound, label: "Profile" },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="bottom-nav">
-      {ITEMS.map((item) => (
-        <Link
-          key={item.route}
-          href={`/${item.route}`}
-          className={`nav-btn${pathname.startsWith(`/${item.route}`) ? " active" : ""}`}
-        >
-          <span className="nav-icon">{item.icon}</span>
-          <span>{item.label}</span>
-        </Link>
-      ))}
+    <nav className="bnav" aria-label="Main">
+      <ul className="bnav-list">
+        {ITEMS.map((item) => {
+          const active = pathname.startsWith(`/${item.route}`);
+          const Icon = item.icon;
+          return (
+            <li key={item.route} className="bnav-item">
+              <Link
+                href={`/${item.route}`}
+                className={`bnav-link${active ? " bnav-link--active" : ""}`}
+                aria-current={active ? "page" : undefined}
+              >
+                <span className="bnav-pill">
+                  <Icon size={22} strokeWidth={active ? 2.4 : 2} aria-hidden="true" />
+                </span>
+                <span className="bnav-label">{item.label}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }

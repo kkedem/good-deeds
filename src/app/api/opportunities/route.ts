@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     online: online ? "true" : "false",
     type,
     capacity,
-    skills,
+    skills: Array.isArray(skills) ? skills.join("|") : skills || "",
   });
 
   return NextResponse.json({ opportunity: await decorateOpportunity(db, opportunity) }, { status: 201 });

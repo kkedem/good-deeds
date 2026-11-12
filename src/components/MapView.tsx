@@ -74,5 +74,6 @@ export default function MapView({ opportunities, center, height = 320, interacti
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opportunities, center, interactive]);
 
-  return <div ref={containerRef} style={{ height, borderRadius: 14, overflow: "hidden" }} />;
+  // isolate keeps Leaflet's high z-index panes from painting over the bottom nav
+  return <div ref={containerRef} style={{ height, borderRadius: 14, overflow: "hidden", isolation: "isolate" }} />;
 }
