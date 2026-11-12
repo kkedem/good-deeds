@@ -962,10 +962,14 @@ p.subtitle {
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 6px;
-  margin: 0 -20px;
-  padding-left: 20px;
-  padding-right: 20px;
+  /* vertical room so the cards' soft shadow isn't clipped into a visible box by the scroller */
+  margin: -12px -20px -28px;
+  padding: 12px 20px 32px;
+  scrollbar-width: none;
+}
+
+.find-recommended-strip::-webkit-scrollbar {
+  display: none;
 }
 
 .find-feature-card {
@@ -977,11 +981,20 @@ p.subtitle {
   overflow: hidden;
   text-align: left;
   cursor: pointer;
+  /* reset native <button> chrome so the photo runs edge to edge; column flex stops the
+     button from vertically centring its content when a sibling card is taller */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
 }
 
 .find-feature-card-top {
   position: relative;
-  height: 130px;
+  height: 140px;
   background: var(--cg-mist);
   color: var(--cg-ink);
 }
