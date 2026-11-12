@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "reset": "node scripts/reset.mjs"
+    "reset": "node scripts/reset.mjs",
+    "migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
     "@upstash/redis": "^1.41.0",
+    "@vis.gl/react-google-maps": "^1.10.2",
     "csv-parse": "^7.0.3",
     "csv-stringify": "^6.9.0",
     "leaflet": "^1.9.4",

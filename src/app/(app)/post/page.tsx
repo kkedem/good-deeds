@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Globe, MapPin, Minus, Plus, Share2, XCircle } from "lucide-react";
 import ChipGroup from "@/components/ChipGroup";
 import CategoryBadge from "@/components/CategoryBadge";
+import PhotoPicker from "@/components/PhotoPicker";
+import { CATEGORY_IMAGES } from "@/lib/opportunityImages";
 import { Api, ApiError, type Category } from "@/lib/client/api";
 import { SKILLS_LIST, showToast } from "@/lib/client/format";
 import { shareOpportunity } from "@/lib/client/share";
@@ -26,6 +28,7 @@ type FormState = {
   type: string;
   capacity: string;
   skills: string[];
+  image_url: string;
 };
 
 const INITIAL: FormState = {
@@ -42,6 +45,7 @@ const INITIAL: FormState = {
   type: "individual",
   capacity: "10",
   skills: [],
+  image_url: "",
 };
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -144,6 +148,7 @@ export default function PostPage() {
       type: form.type,
       capacity: form.capacity,
       skills: form.skills,
+      image_url: form.image_url,
     };
 
     setSubmitting(true);
@@ -255,6 +260,19 @@ export default function PostPage() {
           </div>
           <FieldError id="p-category-err" message={errors.category} />
         </fieldset>
+
+        <div className="post-field">
+          <span className="post-label">
+            Photo <span className="post-optional">Optional</span>
+          </span>
+          <PhotoPicker
+            userId={user.id}
+            value={form.image_url}
+            fallback={CATEGORY_IMAGES[form.category] || ""}
+            onChange={(url) => update("image_url", url)}
+          />
+          <FieldError id="p-image_url-err" message={errors.image_url} />
+        </div>
 
         <div className="post-field">
           <label className="post-label" htmlFor="p-description">

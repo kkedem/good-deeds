@@ -19,7 +19,7 @@ export const COLUMNS: Record<TableName, string[]> = {
   opportunities: [
     "id", "poster_id", "title", "category", "description", "date", "start_time",
     "hours", "postcode", "lat", "lng", "indoor_outdoor", "manual", "online",
-    "type", "capacity", "skills", "status", "created_at",
+    "type", "capacity", "skills", "status", "created_at", "image_url",
   ],
   signups: [
     "id", "opportunity_id", "user_id", "status", "joined_at", "done_at",

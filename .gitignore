@@ -11,3 +11,6 @@ next-env.d.ts
 
 # Working CSV data (demo sign-ups etc). Seed data in data/seed/ stays tracked.
 /data/*.csv
+
+# Locally uploaded deed photos (production stores them in Redis)
+/data/uploads/

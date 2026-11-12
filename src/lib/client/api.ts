@@ -98,6 +98,8 @@ export const Api = {
       "GET",
       `/api/opportunities/${id}?viewerPostcode=${encodeURIComponent(viewerPostcode || "")}`,
     ),
+  uploadImage: (userId: string, dataUrl: string) =>
+    request<{ image_url: string }>("POST", "/api/images", { user_id: userId, data_url: dataUrl }),
   createOpportunity: (payload: Record<string, unknown>) =>
     request<{ opportunity: DecoratedOpportunity }>("POST", "/api/opportunities", payload),
   join: (oppId: string, userId: string) =>

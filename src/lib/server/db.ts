@@ -111,6 +111,7 @@ export function createDb() {
     type: string;
     capacity?: string | number;
     skills?: string;
+    image_url?: string;
   }) {
     const opportunities = await getOpportunities();
     const opportunity: Row = {
@@ -133,6 +134,7 @@ export function createDb() {
       skills: data.skills || "",
       status: "open",
       created_at: new Date().toISOString(),
+      image_url: data.image_url || "",
     };
     opportunities.push(opportunity);
     await save("opportunities", opportunities);

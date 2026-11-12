@@ -980,12 +980,22 @@ p.subtitle {
 }
 
 .find-feature-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 86px;
-  background: var(--cg-pale);
+  position: relative;
+  height: 130px;
+  background: var(--cg-mist);
   color: var(--cg-ink);
+}
+
+.find-feature-card-tag {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--cg-signal);
+  color: var(--cg-ink);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .find-feature-card-body {
@@ -1028,15 +1038,32 @@ p.subtitle {
 }
 
 .find-card-icon {
+  position: relative;
+  display: block;
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 88px;
+  height: 88px;
   border-radius: 14px;
-  background: var(--cg-pale);
+  overflow: hidden;
+  background: var(--cg-mist);
+  color: var(--cg-ink);
+}
+
+.find-card-badge {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
   display: flex;
+}
+
+.find-card-badge .category-badge {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: 999px;
+  background: var(--cg-signal);
   color: var(--cg-ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .find-card-body {

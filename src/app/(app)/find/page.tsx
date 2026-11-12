@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import MapView from "@/components/MapView";
 import CategoryBadge from "@/components/CategoryBadge";
+import OpportunityImage from "@/components/OpportunityImage";
 import { Api, type HistoryEntry } from "@/lib/client/api";
 import { categoryLabel, formatDate, showToast } from "@/lib/client/format";
 import { takeUnseenConfirmation, useSession } from "@/lib/client/session";
@@ -144,7 +145,8 @@ export default function FindPage() {
                 onClick={() => router.push(`/opportunity/${o.id}`)}
               >
                 <div className="find-feature-card-top">
-                  <CategoryBadge category={o.category} size={44} />
+                  <OpportunityImage src={o.image_url} sizes="220px" />
+                  <span className="find-feature-card-tag">{categoryLabel(o.category)}</span>
                 </div>
                 <div className="find-feature-card-body">
                   <h3 className="find-feature-card-title">{o.title}</h3>
@@ -214,7 +216,10 @@ export default function FindPage() {
                   onClick={() => router.push(`/opportunity/${o.id}`)}
                 >
                   <span className="find-card-icon">
-                    <CategoryBadge category={o.category} size={40} />
+                    <OpportunityImage src={o.image_url} sizes="88px" />
+                    <span className="find-card-badge">
+                      <CategoryBadge category={o.category} size={26} />
+                    </span>
                   </span>
                   <span className="find-card-body">
                     <span className="find-card-category">{categoryLabel(o.category)}</span>

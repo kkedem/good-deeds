@@ -356,3 +356,81 @@ textarea.post-input {
   opacity: 0.6;
   cursor: default;
 }
+
+/* ---- Photo picker ---- */
+.photo-picker-preview {
+  position: relative;
+  height: 180px;
+  border-radius: var(--cg-radius-md);
+  overflow: hidden;
+  background: var(--cg-mist);
+}
+
+.photo-picker-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--cg-util);
+}
+
+.photo-picker-chip {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--cg-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.photo-picker-busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(247, 243, 233, 0.8);
+  color: var(--cg-ink);
+  font-weight: 600;
+}
+
+.photo-picker-spin {
+  animation: photo-picker-spin 1s linear infinite;
+}
+
+@keyframes photo-picker-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-picker-spin {
+    animation: none;
+  }
+}
+
+.photo-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.photo-picker-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createDb, isValidUkPostcode } from "@/lib/server/db";
 import { decorateOpportunity, isUpcoming } from "@/lib/server/services";
+import { isAllowedImageUrl } from "@/lib/server/images";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
     type,
     capacity,
     skills,
+    image_url,
   } = body;
 
   const db = createDb();
@@ -76,6 +78,8 @@ export async function POST(request: Request) {
     }
   }
 
+  if (image_url && !isAllowedImageUrl(image_url)) errors.image_url = "Upload the photo again";
+
   if (Object.keys(errors).length > 0) {
     return NextResponse.json({ error: "validation", fields: errors }, { status: 400 });
   }
@@ -112,6 +116,7 @@ export async function POST(request: Request) {
     type,
     capacity,
     skills: Array.isArray(skills) ? skills.join("|") : skills || "",
+    image_url: image_url || "",
   });
 
   return NextResponse.json({ opportunity: await decorateOpportunity(db, opportunity) }, { status: 201 });

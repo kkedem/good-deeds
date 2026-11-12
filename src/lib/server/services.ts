@@ -1,6 +1,7 @@
 import type { Db } from "./db";
 import { distanceMiles, postcodeDistrict } from "./db";
 import type { Row } from "./schema";
+import { opportunityImage } from "@/lib/opportunityImages";
 
 const BRIGHTON_FALLBACK_POSTCODE = "BN1 1AA";
 
@@ -74,6 +75,7 @@ export type DecoratedOpportunity = {
   status: string;
   points_available: number;
   distance_miles: number | null;
+  image_url: string;
 };
 
 export async function decorateOpportunity(
@@ -119,6 +121,7 @@ export async function decorateOpportunity(
     status: opp.status,
     points_available: Math.round(parseFloat(opp.hours) * 10),
     distance_miles: distance,
+    image_url: opportunityImage(opp),
   };
 }
 

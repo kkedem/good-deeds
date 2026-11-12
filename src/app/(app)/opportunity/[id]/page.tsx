@@ -27,7 +27,7 @@ import {
   Wrench,
 } from "lucide-react";
 import MapView from "@/components/MapView";
-import CategoryBadge from "@/components/CategoryBadge";
+import OpportunityImage from "@/components/OpportunityImage";
 import { Api, type Attendee } from "@/lib/client/api";
 import { categoryLabel, formatDate, showToast } from "@/lib/client/format";
 import { downloadIcs } from "@/lib/client/ics";
@@ -156,20 +156,10 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="detail-screen">
       <div className="detail-hero">
-        {opportunity.online ? (
-          <div className="detail-hero-online" aria-hidden="true">
-            <CategoryBadge category={opportunity.category} size={72} />
-          </div>
-        ) : (
-          <div className="detail-hero-map">
-            <MapView
-              opportunities={[opportunity]}
-              center={[opportunity.lat, opportunity.lng]}
-              height={260}
-              interactive={false}
-            />
-          </div>
-        )}
+        <div className="detail-hero-photo">
+          <OpportunityImage src={opportunity.image_url} sizes="(max-width: 480px) 100vw, 480px" priority />
+          <div className="detail-hero-scrim" aria-hidden="true" />
+        </div>
         <div className="detail-hero-bar">
           <button type="button" className="detail-glass-btn" aria-label="Back" onClick={() => router.push("/find")}>
             <ChevronLeft size={22} />
@@ -253,6 +243,16 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
         <h2 id="where-h" className="detail-block-title">
           Where to go
         </h2>
+        {!opportunity.online && (
+          <div className="detail-where-map">
+            <MapView
+              opportunities={[opportunity]}
+              center={[opportunity.lat, opportunity.lng]}
+              height={180}
+              interactive={false}
+            />
+          </div>
+        )}
         <div className="detail-card">
           <p className="detail-card-title">{opportunity.online ? "Online" : opportunity.postcode}</p>
           {opportunity.distance_miles != null && !opportunity.online && (
